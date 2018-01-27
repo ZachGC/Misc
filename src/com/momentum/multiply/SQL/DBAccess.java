@@ -163,7 +163,7 @@ public class DBAccess {
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
      */
-    public void insertInto(String tablename, String[] columns, String[][] data, int totalRecords) throws ClassNotFoundException, SQLException {
+    public void insertInto(String tablename, String[] columns, DATA_TYPES[] dt, String[][] data, int totalRecords) throws ClassNotFoundException, SQLException {
         StringBuilder insertStatement = new StringBuilder("INSERT INTO " + tablename + "(");
 
         for (int i = 0; i < columns.length; i++) {
@@ -172,7 +172,24 @@ public class DBAccess {
                 insertStatement.append(", ");
             }
         }
-        insertStatement.append(")");
+        insertStatement.append(")\n");
+
+        for (int i = 0; i < totalRecords; i++) {
+            insertStatement.append("VALUES(");
+            for (int j = 0; j < columns.length; j++) {
+                if (dt[j] == DATA_TYPES.VARCHAR) {
+                    insertStatement.append(data[i][j]);
+                } else if (dt[i] == DATA_TYPES.DECIMAL) {
+                    insertStatement.append(Double.parseDouble(data[i][j]));
+                } else if (dt[i] == DATA_TYPES.INT || dt[i] == DATA_TYPES.BIT) {
+                    insertStatement.append(Integer.parseInt(data[i][j]));
+                }
+                if (j + 1 != columns.length) {
+                    insertStatement.append(", ");
+                }
+            }
+            insertStatement.append(")\n");
+        }
 
         executeQuery(insertStatement.toString());
 
@@ -181,9 +198,9 @@ public class DBAccess {
 
     public ResultSet executeQuery(String sql) throws SQLException {
         return dbconn.execQuery(dbconn.getConnection(), sql);
-    }    
-    
-    public boolean connectionSuccessful(){
+    }
+
+    public boolean connectionSuccessful() {
         return dbconn.isConnectionSuccessful();
     }
 }
