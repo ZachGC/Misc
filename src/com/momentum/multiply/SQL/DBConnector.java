@@ -159,7 +159,11 @@ public class DBConnector {
 
             //STEP 3: Open a connection
             System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(url, username, password);
+            if (driver.contains("as400")) {
+                conn = DriverManager.getConnection(url, "RWDZC", "ZachC2");
+            } else {
+                conn = DriverManager.getConnection(url, username, password);
+            }
             System.out.println("Connection successful.");
             connectionSuccessful = true;
         } catch (ClassNotFoundException ex) {
@@ -243,7 +247,6 @@ public class DBConnector {
         while (rs.next() && count > 0) {
             vector.add(rs.getString(pos));
             count--;
-            System.out.println(count + " " + columnName);
         }
 
         Set unique = new HashSet();
